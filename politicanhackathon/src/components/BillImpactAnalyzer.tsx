@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { apiFetch } from '@/lib/api';
 
 interface DemographicProfile {
   ageGroup: string;
@@ -144,7 +145,7 @@ export default function BillImpactAnalyzer({ bill }: BillImpactAnalyzerProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/bill-impact', {
+      const response = await apiFetch('/api/bill-impact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

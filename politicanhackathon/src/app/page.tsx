@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { InteractiveUSMap } from "@/components/InteractiveUSMap";
+import { apiFetch } from "@/lib/api";
 import { useState, useEffect } from "react";
 
 interface Member {
@@ -46,7 +47,7 @@ export default function Home() {
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch('/api/members');
+      const response = await apiFetch('/api/members');
       const data = await response.json();
       setMembers(data.members || []);
     } catch (error) {

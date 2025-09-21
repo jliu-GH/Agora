@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 
 interface Member {
   id: string;
@@ -83,7 +84,7 @@ export default function ModeratorDebatePage() {
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch('/api/members');
+      const response = await apiFetch('/api/members');
       const data = await response.json();
       setMembers(data.members || []);
     } catch (error) {
@@ -93,7 +94,7 @@ export default function ModeratorDebatePage() {
 
   const fetchDebateState = async () => {
     try {
-      const response = await fetch('/api/moderator-debate');
+      const response = await apiFetch('/api/moderator-debate');
       const data = await response.json();
       setDebateState(data.state);
     } catch (error) {
@@ -104,7 +105,7 @@ export default function ModeratorDebatePage() {
   const sendCommand = async (action: string, data: any = {}) => {
     setLoading(true);
     try {
-      const response = await fetch('/api/moderator-debate', {
+      const response = await apiFetch('/api/moderator-debate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, ...data })

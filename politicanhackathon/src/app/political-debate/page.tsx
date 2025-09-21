@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 interface Member {
   id: string;
@@ -58,7 +59,7 @@ export default function PoliticalDebatePage() {
   const fetchMembers = async () => {
     try {
       setLoadingMembers(true);
-      const res = await fetch('/api/members');
+      const res = await apiFetch('/api/members');
       if (!res.ok) throw new Error('Failed to fetch members');
       const data = await res.json();
       setMembers(data.members || []);
@@ -107,7 +108,7 @@ export default function PoliticalDebatePage() {
         statement: entry.response
       }));
 
-      const res = await fetch('/api/interaction', {
+      const res = await apiFetch('/api/interaction', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -205,7 +206,7 @@ export default function PoliticalDebatePage() {
         statement: entry.response
       }));
 
-      const res = await fetch('/api/interaction', {
+      const res = await apiFetch('/api/interaction', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 
 interface Member {
   id: string;
@@ -55,7 +56,7 @@ export default function DebatePage() {
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch('/api/members');
+      const response = await apiFetch('/api/members');
       const data = await response.json();
       setMembers(data.members || []);
     } catch (error) {
@@ -65,7 +66,7 @@ export default function DebatePage() {
 
   const fetchDebateState = async () => {
     try {
-      const response = await fetch('/api/debate', {
+      const response = await apiFetch('/api/debate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ command: 'get_state' })
@@ -80,7 +81,7 @@ export default function DebatePage() {
   const sendCommand = async (command: string, data: any = {}) => {
     setLoading(true);
     try {
-      const response = await fetch('/api/debate', {
+      const response = await apiFetch('/api/debate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ command, ...data })
@@ -130,7 +131,7 @@ export default function DebatePage() {
       setChatHistory(prev => [...prev, `[YOU] ${message}`]);
       
       // Send to interaction API with conversation history
-      const response = await fetch('/api/interaction', {
+      const response = await apiFetch('/api/interaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

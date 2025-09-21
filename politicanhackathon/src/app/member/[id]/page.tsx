@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import FundingAnalysis from '@/components/FundingAnalysis';
+import { apiFetch } from '@/lib/api';
 
 interface Member {
   id: string;
@@ -67,7 +68,7 @@ export default function MemberProfilePage() {
   const fetchMemberProfile = async (id: string) => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/members/${id}`);
+      const res = await apiFetch(`/api/members/${id}`);
       if (!res.ok) throw new Error('Failed to fetch member');
       const data = await res.json();
       setMember(data.member);
@@ -81,7 +82,7 @@ export default function MemberProfilePage() {
 
   const fetchMemberStats = async (id: string) => {
     try {
-      const res = await fetch(`/api/members/${id}/stats`);
+      const res = await apiFetch(`/api/members/${id}/stats`);
       if (res.ok) {
         const data = await res.json();
         setStats(data.stats);
@@ -93,7 +94,7 @@ export default function MemberProfilePage() {
 
   const fetchCommitteeSummary = async (id: string) => {
     try {
-      const res = await fetch(`/api/members/${id}/committees`);
+      const res = await apiFetch(`/api/members/${id}/committees`);
       if (res.ok) {
         const data = await res.json();
         setCommitteeSummary(data.summary);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 
 interface Member {
   id: string;
@@ -48,7 +49,7 @@ export default function USMap() {
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch('/api/members');
+      const response = await apiFetch('/api/members');
       const data = await response.json();
       setMembers(data.members || []);
     } catch (error) {

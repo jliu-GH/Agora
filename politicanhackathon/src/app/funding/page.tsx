@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 interface FundingOverview {
   overview: {
@@ -64,7 +65,7 @@ export default function FundingDashboard() {
 
   const fetchOverviewData = async () => {
     try {
-      const response = await fetch('/api/funding?type=analytics');
+      const response = await apiFetch('/api/funding?type=analytics');
       if (response.ok) {
         const data = await response.json();
         setOverview(data);
@@ -76,7 +77,7 @@ export default function FundingDashboard() {
 
   const fetchDonorAnalysis = async () => {
     try {
-      const response = await fetch('/api/funding?type=top-donors');
+      const response = await apiFetch('/api/funding?type=top-donors');
       if (response.ok) {
         const data = await response.json();
         setDonorAnalysis(data);
@@ -93,7 +94,7 @@ export default function FundingDashboard() {
     
     setSearching(true);
     try {
-      const response = await fetch(`/api/funding?candidate=${encodeURIComponent(searchQuery)}`);
+      const response = await apiFetch(`/api/funding?candidate=${encodeURIComponent(searchQuery)}`);
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.records || []);

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { InteractiveUSMap } from '@/components/InteractiveUSMap';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 interface Member {
   id: string;
@@ -51,7 +52,7 @@ export default function MapPage() {
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch('/api/members');
+      const response = await apiFetch('/api/members');
       const data = await response.json();
       setMembers(data.members || []);
     } catch (error) {

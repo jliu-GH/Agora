@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 
+const isGhPages = process.env.NEXT_PUBLIC_DEPLOY_TARGET === 'gh-pages';
+const basePathEnv = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
 const nextConfig: NextConfig = {
   /* config options here */
   eslint: {
@@ -12,8 +15,16 @@ const nextConfig: NextConfig = {
     // your project has TypeScript errors.
     ignoreBuildErrors: true,
   },
-  // For Vercel deployment
-  output: 'standalone',
+  // Deployment target
+  output: isGhPages ? 'export' : 'standalone',
+  // Optional base path/asset prefix for GitHub Pages project sites
+  ...(isGhPages && basePathEnv
+    ? {
+        basePath: basePathEnv,
+        assetPrefix: basePathEnv,
+        images: { unoptimized: true },
+      }
+    : {}),
 };
 
 export default nextConfig;

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 import Link from 'next/link';
 
 interface Bill {
@@ -62,7 +63,7 @@ export default function BillsPage() {
       if (filters.subject) params.append('subject', filters.subject);
       params.append('limit', '100');
 
-      const res = await fetch(`/api/bills/active?${params}`);
+      const res = await apiFetch(`/api/bills/active?${params}`);
       if (!res.ok) throw new Error('Failed to fetch bills');
       const data = await res.json();
       setBills(data.bills);

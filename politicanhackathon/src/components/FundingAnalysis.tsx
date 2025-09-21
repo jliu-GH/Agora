@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 
 interface FundingSource {
   amount: number;
@@ -64,7 +65,7 @@ export default function FundingAnalysis({ memberId, memberName }: FundingAnalysi
   const fetchFundingData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/members/${memberId}/funding`);
+      const response = await apiFetch(`/api/members/${memberId}/funding`);
       const data = await response.json();
       
       if (response.ok && data.funding) {

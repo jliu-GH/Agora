@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 
 // US states topology URL (simplified version for better performance)
@@ -70,7 +71,7 @@ export function InteractiveUSMap({
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch('/api/members');
+      const response = await apiFetch('/api/members');
       const data = await response.json();
       setMembers(data.members || []);
     } catch (error) {
@@ -249,5 +250,4 @@ export function InteractiveUSMap({
     </div>
   );
 }
-
 

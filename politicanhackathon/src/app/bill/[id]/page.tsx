@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { apiFetch } from '@/lib/api';
 import Link from 'next/link';
 import BillImpactAnalyzer from '@/components/BillImpactAnalyzer';
 
@@ -51,7 +52,7 @@ export default function BillPage() {
 
   const fetchBill = async (billId: string) => {
     try {
-      const response = await fetch(`/api/bills/active`);
+      const response = await apiFetch(`/api/bills/active`);
       const data = await response.json();
       if (data.bills) {
         const foundBill = data.bills.find((b: Bill) => b.id === billId);
@@ -74,7 +75,7 @@ export default function BillPage() {
     setChatQuery(''); // Clear input immediately
     
     try {
-      const response = await fetch('/api/bill-chat', {
+      const response = await apiFetch('/api/bill-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 
 interface AnalyticsData {
   overview: {
@@ -74,9 +75,9 @@ export default function CongressionalAnalytics() {
       setLoading(true);
       
       const [overviewResponse, billStatusResponse, memberActivityResponse] = await Promise.all([
-        fetch('/api/congress-analytics?type=overview'),
-        fetch('/api/congress-analytics?type=bills-by-status'),
-        fetch('/api/congress-analytics?type=member-activity')
+        apiFetch('/api/congress-analytics?type=overview'),
+        apiFetch('/api/congress-analytics?type=bills-by-status'),
+        apiFetch('/api/congress-analytics?type=member-activity')
       ]);
 
       if (overviewResponse.ok) {
