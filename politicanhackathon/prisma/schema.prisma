@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Member {
+  id                String          @id
+  firstName         String
+  lastName          String
+  chamber           String          // "house" | "senate"
+  state             String          // "MD", etc.
+  district          String?         // null for senate
+  party             String          // "D"|"R"|"I"|...
+  dwNominate        Float?
+  committees        CommitteeMember[]
+  terms             OfficeTerm[]
+  bills             Bill[]          @relation("sponsored")
+  contributions     Contribution[]
+  votePositions     VotePosition[]
+  documents         Document[]      // RAG documents for this politician
+  chunks            Chunk[]         // Direct reference to chunks for faster queries
+  bio               String?         // Official biography from government sources
+  politicalBackground String?       // Political background from official records
+  keyPositions      String?         // Key positions (JSON string)
+  recentBills       String?         // Recent bills (JSON string)
+  votingRecord      String?         // Voting record (JSON string)
+  contactInfo       String?         // Contact info (JSON string)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([state, chamber])
+}
+
+model OfficeTerm {
+  id        String  @id
+  memberId  String
+  startDate DateTime
+  endDate   DateTime?
+  Member    Member  @relation(fields: [memberId], references: [id])
+}
+
+model Committee {
+  id   String @id
+  name String
+  members CommitteeMember[]
+}
+
+model CommitteeMember {
+  id          String   @id
+  committeeId String
+  memberId    String
+  role        String?
+  Committee   Committee @relation(fields: [committeeId], references: [id])
+  Member      Member    @relation(fields: [memberId], references: [id])
+}
+
+model Bill {
+  id         String   @id   // e.g., "hr123-118"
+  congress   Int
+  chamber    String
+  title      String
+  summary    String?
+  status     String
+  sponsorId  String?
+  sponsor    Member?  @relation("sponsored", fields: [sponsorId], references: [id])
+  actions    BillAction[]
+  votes      RollCall[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([congress, chamber])
+}
+
+model BillAction {
+  id        String   @id
+  billId    String
+  date      DateTime
+  chamber   String?
+  stage     String   // introduced|committee|floor|passed|etc
+  text      String
+  sourceUrl String
+  Bill      Bill     @relation(fields: [billId], references: [id])
+}
+
+model RollCall {
+  id        String   @id   // chamber-rollno-congress
+  billId    String?
+  chamber   String
+  date      DateTime
+  result    String
+  yeas      Int
+  nays      Int
+  positions VotePosition[]
+  Bill      Bill?    @relation(fields: [billId], references: [id])
+}
+
+model VotePosition {
+  id        String  @id
+  rollCallId String
+  memberId   String
+  position   String // "Yea"|"Nay"|"Present"|"Not Voting"
+  RollCall   RollCall @relation(fields: [rollCallId], references: [id])
+  Member     Member   @relation(fields: [memberId], references: [id])
+}
+
+model Contribution {
+  id          String  @id
+  memberId    String?
+  fecCommitteeId String?
+  donor       String?
+  amount      Float
+  date        DateTime
+  cycle       Int
+  Member      Member? @relation(fields: [memberId], references: [id])
+}
+
+model CrimeMetric {
+  id        String   @id
+  state     String
+  year      Int
+  violentRate Float?
+  propertyRate Float?
+  firearmDeathsPer100k Float?
+  notes     String?
+}
+
+model Document {
+  id          String   @id
+  url         String
+  publisher   String
+  documentType String  // "voting_record", "bill_sponsorship", "press_release", "committee_transcript"
+  politicianId String? // Reference to Member.id for politician-specific documents
+  politician  Member?  @relation(fields: [politicianId], references: [id])
+  title       String?
+  date        DateTime?
+  retrievedAt DateTime
+  asOf        DateTime?
+  text        String
+  metadata    String?  // JSON string for additional metadata
+  chunks      Chunk[]
+  
+  @@index([politicianId, documentType])
+  @@index([date])
+}
+
+model Chunk {
+  id          String   @id
+  documentId  String
+  politicianId String? // Direct reference for faster queries
+  politician  Member?  @relation(fields: [politicianId], references: [id])
+  text        String
+  spanStart   Int
+  spanEnd     Int
+  embedding   String   // Store as JSON string for SQLite (comma-separated float values)
+  sourceUrl   String
+  sourceTitle String?
+  documentType String? // Inherited from document for faster filtering
+  date        DateTime?
+  Document    Document @relation(fields: [documentId], references: [id])
+  
+  @@index([politicianId, documentType])
+  @@index([documentId])
+}
